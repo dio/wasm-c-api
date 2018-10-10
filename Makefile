@@ -62,8 +62,8 @@ V8_GN_ARGS = \
 # Compiler config
 ifeq (${C_COMP},clang)
   CC_COMP = clang++
-  LD_GROUP_START = 
-  LD_GROUP_END = 
+  LD_GROUP_START =
+  LD_GROUP_END =
 else ifeq (${C_COMP},gcc)
   CC_COMP = g++
   LD_GROUP_START = -Wl,--start-group
@@ -232,7 +232,7 @@ ${V8_SRC}/${WASM_V8_PATCH}.cc: ${WASM_SRC}/${WASM_V8_PATCH}.cc
 
 # Check out set version
 .PHONY: v8-checkout
-v8-checkout: v8-checkout-banner ${V8_DEPOT_TOOLS} ${V8_V8}
+v8-checkout: v8-checkout-banner ${V8_V8}
 	(cd ${V8_V8}; git pull origin ${V8_VERSION})
 	(cd ${V8_V8}; git checkout ${V8_VERSION})
 	(cd ${V8_V8}; PATH=${V8_PATH} gclient sync)
@@ -248,7 +248,7 @@ ${V8_DEPOT_TOOLS}:
 	mkdir -p ${V8_DIR}
 	(cd ${V8_DIR}; git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git)
 
-${V8_V8}:
+${V8_V8}: ${V8_DEPOT_TOOLS}
 	mkdir -p ${V8_DIR}
 	(cd ${V8_DIR}; PATH=${V8_PATH} fetch v8)
 	(cd ${V8_V8}; git checkout ${V8_VERSION})
