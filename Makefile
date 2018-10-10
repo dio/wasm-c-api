@@ -7,10 +7,13 @@ V8_VERSION = branch-heads/6.9
 V8_ARCH = x64
 V8_MODE = release
 
-WASM_FLAGS = -DDEBUG  # -DDEBUG_LOG
-C_FLAGS = ${WASM_FLAGS} -ggdb -O0 -fsanitize=address
+# WASM_FLAGS = -DDEBUG  # -DDEBUG_LOG
+WASM_FLAGS =
+# C_FLAGS = ${WASM_FLAGS} -ggdb -O0 -fsanitize=address
+C_FLAGS = ${WASM_FLAGS}
 CC_FLAGS = ${C_FLAGS}
-LD_FLAGS = -fsanitize-memory-track-origins -fsanitize-memory-use-after-dtor
+# LD_FLAGS = -fsanitize-memory-track-origins -fsanitize-memory-use-after-dtor
+LD_FLAGS =
 
 C_COMP = clang
 
@@ -160,11 +163,12 @@ ${EXAMPLE_OUT}/%.wasm: ${EXAMPLE_DIR}/%.wasm
 # To build both C / C++ APIs:
 #   make wasm
 
-.PHONY: wasm wasm-c wasm-cc
-wasm: wasm-c wasm-cc
+.PHONY: wasm wasm-c wasm-cc wasm-cc-static
+wasm: wasm-c wasm-cc wasm-cc-static
 wasm-c: ${WASM_C_LIBS:%=${WASM_OUT}/%.o}
 wasm-cc: ${WASM_CC_LIBS:%=${WASM_OUT}/%.o}
-
+wasm-cc-static: wasm-cc
+	ar rvs ${WASM_OUT}/wasm.a ${WASM_OUT}/wasm-bin.o ${WASM_OUT}/wasm-v8.o
 
 # Compiling
 ${WASM_OUT}/%.o: ${WASM_SRC}/%.cc ${WASM_INCLUDE}/wasm.h ${WASM_INCLUDE}/wasm.hh
