@@ -62,8 +62,8 @@ V8_GN_ARGS = \
 # Compiler config
 ifeq (${C_COMP},clang)
   CC_COMP = clang++
-  LD_GROUP_START = 
-  LD_GROUP_END = 
+  LD_GROUP_START =
+  LD_GROUP_END =
 else ifeq (${C_COMP},gcc)
   CC_COMP = g++
   LD_GROUP_START = -Wl,--start-group
@@ -203,9 +203,9 @@ v8: ${V8_INCLUDE}/${WASM_V8_PATCH}.hh ${V8_SRC}/${WASM_V8_PATCH}.cc v8-patch v8-
 v8-build:
 	@echo ==== Building V8 ${V8_CURRENT} ${V8_BUILD} ====
 	(cd ${V8_V8}; PATH=${V8_PATH} tools/dev/v8gen.py ${V8_BUILD} -- ${V8_GN_ARGS})
-	(cd ${V8_V8}; PATH=${V8_PATH} ninja -C out.gn/${V8_BUILD})
+	(cd ${V8_V8}; PATH=${V8_PATH} $(abspath ${V8_DEPOT_TOOLS})/ninja -C out.gn/${V8_BUILD})
 	(cd ${V8_V8}; touch out.gn/${V8_BUILD}/args.gn)
-	(cd ${V8_V8}; PATH=${V8_PATH} ninja -C out.gn/${V8_BUILD})
+	(cd ${V8_V8}; PATH=${V8_PATH} $(abspath ${V8_DEPOT_TOOLS})/ninja -C out.gn/${V8_BUILD})
 
 .PHONY: v8-patch
 v8-patch:
@@ -235,7 +235,7 @@ ${V8_SRC}/${WASM_V8_PATCH}.cc: ${WASM_SRC}/${WASM_V8_PATCH}.cc
 v8-checkout: v8-checkout-banner ${V8_DEPOT_TOOLS} ${V8_V8}
 	(cd ${V8_V8}; git pull origin ${V8_VERSION})
 	(cd ${V8_V8}; git checkout ${V8_VERSION})
-	(cd ${V8_V8}; PATH=${V8_PATH} gclient sync)
+	(cd ${V8_V8}; PATH=${V8_PATH} $(abspath ${V8_DEPOT_TOOLS})/gclient sync)
 	mkdir -p ${V8_OUT}
 	echo >${V8_OUT}/version ${V8_VERSION}
 	@if [ ${V8_CURRENT} != ${V8_VERSION} ]; then echo ==== Done. If you have trouble building V8, run \`make v8-clean\` first ====; fi
@@ -250,7 +250,7 @@ ${V8_DEPOT_TOOLS}:
 
 ${V8_V8}:
 	mkdir -p ${V8_DIR}
-	(cd ${V8_DIR}; PATH=${V8_PATH} fetch v8)
+	(cd ${V8_DIR}; PATH=${V8_PATH} $(abspath ${V8_DEPOT_TOOLS})/fetch v8)
 	(cd ${V8_V8}; git checkout ${V8_VERSION})
 
 # Update current check-out
@@ -258,7 +258,7 @@ ${V8_V8}:
 v8-update: v8-unpatch
 	@echo ==== Updating V8 ${V8_CURRENT} ====
 	(cd ${V8_V8}; git pull origin ${V8_CURRENT})
-	(cd ${V8_V8}; PATH=${V8_PATH} gclient sync)
+	(cd ${V8_V8}; PATH=${V8_PATH} $(abspath ${V8_DEPOT_TOOLS})/gclient sync)
 
 
 # Clean-up
